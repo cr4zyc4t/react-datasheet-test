@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import ReactDataSheet from "react-datasheet";
 import "./DataSheet.scss";
 
@@ -22,9 +22,29 @@ function generateData(sizeX, sizeY) {
 
 export default function DataSheet() {
 	const [grid, setGrid] = useState(generateData(20, 20));
+	const containerRef = useRef(null);
+
+	const onSelect = useCallback(({ end }) => {
+		const container = containerRef.current;
+		const maxI = end.i;
+		const maxJ = end.j;
+
+		// Check if not in vertical viewpot
+		if (container.scrollTop > maxI * 30) {
+			container.scrollTop = maxI * 30;
+		} else if (container.scrollTop + 400 < (maxI + 1) * 30) {
+			container.scrollTop = (maxI + 1) * 30 - 400;
+		}
+		// Check if not in horizontal viewpot
+		if (container.scrollLeft > maxJ * 50) {
+			container.scrollLeft = maxJ * 50;
+		} else if (container.scrollLeft + 400 < (maxJ + 1) * 50) {
+			container.scrollLeft = (maxJ + 1) * 50 - 400;
+		}
+	}, []);
 
 	return (
-		<div className="container">
+		<div className="container" ref={containerRef}>
 			<ReactDataSheet
 				data={grid}
 				valueRenderer={(cell) => cell.value}
@@ -35,6 +55,7 @@ export default function DataSheet() {
 					});
 					setGrid(newGrid);
 				}}
+				onSelect={onSelect}
 			/>
 		</div>
 	);
