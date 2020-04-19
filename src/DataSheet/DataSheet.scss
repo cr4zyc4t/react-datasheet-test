@@ -11,9 +11,9 @@ table.data-grid {
 }
 
 table.data-grid td.cell {
-	border: solid 1px grey;
+	border: solid 1px #ddd;
 	padding: 8px 10px;
-	width: 50px;
+	width: 50px !important;
 	height: 30px !important;
 	vertical-align: middle !important;
 
@@ -173,4 +173,55 @@ pre {
 }
 .github-link:hover {
 	color: #ddd;
+}
+
+.wrapper {
+	position: relative;
+
+	.xAxis {
+		width: 400px;
+		overflow-x: hidden;
+		position: absolute;
+		top: 0;
+		left: 50px;
+
+		.xAxis-cells {
+			// display: flex;
+			// flex-wrap: nowrap;
+			white-space: nowrap;
+			.cell {
+				display: inline-block;
+				height: 30px;
+				width: 50px;
+				border-top: solid 1px #ddd;
+				border-left: solid 1px #ddd;
+				vertical-align: middle;
+			}
+		}
+	}
+	.yaXis {
+		height: 400px;
+		overflow-y: hidden;
+		position: absolute;
+		top: 30px;
+		left: 0px;
+
+		.yAxis-cells {
+			// display: flex;
+			// flex-wrap: nowrap;
+			// white-space: nowrap;
+			.cell {
+				height: 30px;
+				width: 50px;
+				border-top: solid 1px #ddd;
+				border-left: solid 1px #ddd;
+				vertical-align: middle;
+			}
+		}
+	}
+	.container {
+		position: absolute;
+		top: 30px;
+		left: 50px;
+	}
 }

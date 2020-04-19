@@ -4,7 +4,7 @@ import DataSheet from "./DataSheet/DataSheet";
 function App() {
 	return (
 		<div className="App">
-			<DataSheet />
+			<DataSheet gridSize={{ x: 48, y: 48 }} />
 		</div>
 	);
 }
