@@ -54,27 +54,30 @@ export default function DataSheet({ gridSize }) {
 	return (
 		<div className="wrapper">
 			<div className="xAxis" ref={xAxisRef}>
-				<div className="xAxis-cells">
-					{range(gridSize.x).map((v, i) => {
-						return (
-							<div key={i} className="cell">
-								{i}
-							</div>
-						);
-					})}
-				</div>
+				<table className="header-table">
+					<tbody>
+						<tr>
+							{range(gridSize.x).map((v, i) => (
+								<td className="cell" key={i}>
+									{i}
+								</td>
+							))}
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			<div className="yaXis" ref={yAxisRef}>
-				<div className="yAxis-cells">
-					{range(gridSize.y).map((v, i) => {
-						return (
-							<div key={i} className="cell">
-								{i}
-							</div>
-						);
-					})}
-				</div>
+				<table className="header-table">
+					<tbody>
+						{range(gridSize.y).map((v, i) => (
+							<tr key={i}>
+								<td className="cell">{i}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
 			</div>
+			<div className="placeholder"></div>
 			<div className="container" ref={containerRef} onScroll={handleAxisScroll}>
 				<ReactDataSheet
 					data={grid}
