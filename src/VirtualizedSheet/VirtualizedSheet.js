@@ -636,8 +636,7 @@ export default class VirtualizedSheet extends PureComponent {
 			// keyFn,
 		} = this.props;
 
-		const value = data[i][j].value;
-		const cell = { value };
+		const cell = data[i][j];
 		return (
 			<div style={style}>
 				<DataCell

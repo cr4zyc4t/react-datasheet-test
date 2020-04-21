@@ -181,7 +181,6 @@ export default class DataCell extends PureComponent {
 
 	renderViewer(cell, row, col, valueRenderer, valueViewer) {
 		const Viewer = cell.valueViewer || valueViewer || ValueViewer;
-		// const Viewer = ValueViewer;
 		const value = renderValue(cell, row, col, valueRenderer);
 		return <Viewer cell={cell} row={row} col={col} value={value} />;
 	}
@@ -195,7 +194,7 @@ export default class DataCell extends PureComponent {
 			valueRenderer,
 			dataEditor,
 			valueViewer,
-			// attributesRenderer,
+			attributesRenderer,
 			selected,
 			editing,
 			onKeyUp,
@@ -222,13 +221,13 @@ export default class DataCell extends PureComponent {
 
 		return (
 			<CellRenderer
-				// row={row}
-				// col={col}
-				// cell={cell}
+				row={row}
+				col={col}
+				cell={cell}
 				selected={selected}
 				editing={editing}
 				updated={updated}
-				// attributesRenderer={attributesRenderer}
+				attributesRenderer={attributesRenderer}
 				className={className}
 				style={widthStyle(cell)}
 				onMouseDown={this.handleMouseDown}

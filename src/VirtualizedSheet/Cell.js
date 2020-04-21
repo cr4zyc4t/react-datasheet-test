@@ -1,12 +1,12 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import PropTypes from "prop-types";
 // import CellShape from "react-datasheet/lib/CellShape";
 
 const Cell = memo(function Cell({
-	// cell,
-	// row,
-	// col,
-	// attributesRenderer,
+	cell,
+	row,
+	col,
+	attributesRenderer,
 	className,
 	style,
 	onMouseDown,
@@ -14,14 +14,9 @@ const Cell = memo(function Cell({
 	onDoubleClick,
 	onContextMenu,
 	children,
-	// selected,
 }) {
-	// console.log(`Log: selected`, selected);
 	// const { colSpan, rowSpan } = cell;
-	// const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
-	useEffect(() => {
-		return () => console.log("a");
-	}, []);
+	const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
 
 	return (
 		<div
@@ -33,6 +28,7 @@ const Cell = memo(function Cell({
 			onContextMenu={onContextMenu}
 			// colSpan={colSpan}
 			// rowSpan={rowSpan}
+			{...attributes}
 			style={style}>
 			{children}
 		</div>
@@ -40,8 +36,8 @@ const Cell = memo(function Cell({
 });
 
 Cell.propTypes = {
-	// row: PropTypes.number.isRequired,
-	// col: PropTypes.number.isRequired,
+	row: PropTypes.number.isRequired,
+	col: PropTypes.number.isRequired,
 	// cell: PropTypes.shape(CellShape).isRequired,
 	selected: PropTypes.bool,
 	editing: PropTypes.bool,
