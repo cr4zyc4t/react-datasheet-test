@@ -12,7 +12,7 @@ import {
 } from "react-datasheet/lib/keys";
 
 import Cell from "./Cell";
-import CellShape from "react-datasheet/lib/CellShape";
+// import CellShape from "react-datasheet/lib/CellShape";
 import DataEditor from "react-datasheet/lib/DataEditor";
 import ValueViewer from "react-datasheet/lib/ValueViewer";
 import { renderValue, renderData } from "react-datasheet/lib/renderHelpers";
@@ -181,6 +181,7 @@ export default class DataCell extends PureComponent {
 
 	renderViewer(cell, row, col, valueRenderer, valueViewer) {
 		const Viewer = cell.valueViewer || valueViewer || ValueViewer;
+		// const Viewer = ValueViewer;
 		const value = renderValue(cell, row, col, valueRenderer);
 		return <Viewer cell={cell} row={row} col={col} value={value} />;
 	}
@@ -194,7 +195,7 @@ export default class DataCell extends PureComponent {
 			valueRenderer,
 			dataEditor,
 			valueViewer,
-			attributesRenderer,
+			// attributesRenderer,
 			selected,
 			editing,
 			onKeyUp,
@@ -214,19 +215,20 @@ export default class DataCell extends PureComponent {
 			editing && "editing",
 			cell.readOnly && "read-only",
 			updated && "updated",
+			row % 2 === col % 2 && "dark-cell",
 		]
 			.filter((a) => a)
 			.join(" ");
 
 		return (
 			<CellRenderer
-				row={row}
-				col={col}
-				cell={cell}
+				// row={row}
+				// col={col}
+				// cell={cell}
 				selected={selected}
 				editing={editing}
 				updated={updated}
-				attributesRenderer={attributesRenderer}
+				// attributesRenderer={attributesRenderer}
 				className={className}
 				style={widthStyle(cell)}
 				onMouseDown={this.handleMouseDown}
@@ -243,13 +245,13 @@ export default class DataCell extends PureComponent {
 DataCell.propTypes = {
 	row: PropTypes.number.isRequired,
 	col: PropTypes.number.isRequired,
-	cell: PropTypes.shape(CellShape).isRequired,
+	// cell: PropTypes.shape(CellShape).isRequired,
 	forceEdit: PropTypes.bool,
 	selected: PropTypes.bool,
 	editing: PropTypes.bool,
 	editValue: PropTypes.any,
 	clearing: PropTypes.bool,
-	cellRenderer: PropTypes.func,
+	cellRenderer: PropTypes.any,
 	valueRenderer: PropTypes.func.isRequired,
 	dataRenderer: PropTypes.func,
 	valueViewer: PropTypes.func,

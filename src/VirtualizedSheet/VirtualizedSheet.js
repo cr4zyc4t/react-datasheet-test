@@ -18,6 +18,9 @@ import {
 	RIGHT_KEY,
 } from "react-datasheet/lib/keys";
 import { isEmpty, range, defaultParsePaste } from "../utils";
+import { FixedSizeGrid as Grid } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+import "./VirtualizedSheet.scss";
 
 export default class VirtualizedSheet extends PureComponent {
 	static propTypes = {
@@ -43,7 +46,7 @@ export default class VirtualizedSheet extends PureComponent {
 		dataRenderer: PropTypes.func,
 		sheetRenderer: PropTypes.func.isRequired,
 		rowRenderer: PropTypes.func.isRequired,
-		cellRenderer: PropTypes.func.isRequired,
+		cellRenderer: PropTypes.any.isRequired,
 		valueViewer: PropTypes.func,
 		dataEditor: PropTypes.func,
 		parsePaste: PropTypes.func,
@@ -364,8 +367,8 @@ export default class VirtualizedSheet extends PureComponent {
 
 	getSelectedCells(data, start, end) {
 		let selected = [];
-		range(start.i, end.i).map((row) => {
-			range(start.j, end.j).map((col) => {
+		range(start.i, end.i).forEach((row) => {
+			range(start.j, end.j).forEach((col) => {
 				if (data[row] && data[row][col]) {
 					selected.push({ cell: data[row][col], row, col });
 				}
@@ -525,6 +528,7 @@ export default class VirtualizedSheet extends PureComponent {
 	}
 
 	onMouseDown(i, j, e) {
+		e.preventDefault();
 		const isNowEditingSameCell =
 			!isEmpty(this.state.editing) && this.state.editing.i === i && this.state.editing.j === j;
 		let editing =
@@ -614,75 +618,102 @@ export default class VirtualizedSheet extends PureComponent {
 		return this.state.clear.i === i && this.state.clear.j === j;
 	}
 
-	render() {
+	virtualizedCell = ({ columnIndex: j, rowIndex: i, style }) => {
+		const { forceEdit } = this.state;
+		const isEditing = this.isEditing(i, j);
 		const {
-			sheetRenderer: SheetRenderer,
-			rowRenderer: RowRenderer,
+			// sheetRenderer: SheetRenderer,
+			// rowRenderer: RowRenderer,
 			cellRenderer,
 			dataRenderer,
 			valueRenderer,
 			dataEditor,
 			valueViewer,
 			attributesRenderer,
-			className,
-			overflow,
+			// className,
+			// overflow,
 			data,
-			keyFn,
+			// keyFn,
 		} = this.props;
-		const { forceEdit } = this.state;
+
+		const value = data[i][j].value;
+		const cell = { value };
+		return (
+			<div style={style}>
+				<DataCell
+					key={`${i}-${j}`}
+					row={i}
+					col={j}
+					cell={cell}
+					forceEdit={forceEdit}
+					onMouseDown={this.onMouseDown}
+					onMouseOver={this.onMouseOver}
+					onDoubleClick={this.onDoubleClick}
+					onContextMenu={this.onContextMenu}
+					onChange={this.onChange}
+					onRevert={this.onRevert}
+					onNavigate={this.handleKeyboardCellMovement}
+					onKey={this.handleKey}
+					selected={this.isSelected(i, j)}
+					editing={isEditing}
+					clearing={this.isClearing(i, j)}
+					attributesRenderer={attributesRenderer}
+					cellRenderer={cellRenderer}
+					valueRenderer={valueRenderer}
+					dataRenderer={dataRenderer}
+					valueViewer={valueViewer}
+					dataEditor={dataEditor}
+					editValue={this.state.editValue}
+					{...(isEditing
+						? {
+								onEdit: this.handleEdit,
+						  }
+						: {})}
+				/>
+			</div>
+		);
+	};
+
+	render() {
+		const {
+			// sheetRenderer: SheetRenderer,
+			// rowRenderer: RowRenderer,
+			// cellRenderer,
+			// dataRenderer,
+			// valueRenderer,
+			// dataEditor,
+			// valueViewer,
+			// attributesRenderer,
+			// className,
+			// overflow,
+			data,
+			// keyFn,
+		} = this.props;
+		// const { forceEdit } = this.state;
 
 		return (
-			<span
-				ref={(r) => {
-					this.dgDom = r;
-				}}
-				tabIndex="0"
-				className="data-grid-container"
-				onKeyDown={this.handleKey}>
-				<SheetRenderer
-					data={data}
-					className={["data-grid", className, overflow].filter((a) => a).join(" ")}>
-					{data.map((row, i) => (
-						<RowRenderer key={keyFn ? keyFn(i) : i} row={i} cells={row}>
-							{row.map((cell, j) => {
-								const isEditing = this.isEditing(i, j);
-								return (
-									<DataCell
-										key={cell.key ? cell.key : `${i}-${j}`}
-										row={i}
-										col={j}
-										cell={cell}
-										forceEdit={forceEdit}
-										onMouseDown={this.onMouseDown}
-										onMouseOver={this.onMouseOver}
-										onDoubleClick={this.onDoubleClick}
-										onContextMenu={this.onContextMenu}
-										onChange={this.onChange}
-										onRevert={this.onRevert}
-										onNavigate={this.handleKeyboardCellMovement}
-										onKey={this.handleKey}
-										selected={this.isSelected(i, j)}
-										editing={isEditing}
-										clearing={this.isClearing(i, j)}
-										attributesRenderer={attributesRenderer}
-										cellRenderer={cellRenderer}
-										valueRenderer={valueRenderer}
-										dataRenderer={dataRenderer}
-										valueViewer={valueViewer}
-										dataEditor={dataEditor}
-										editValue={this.state.editValue}
-										{...(isEditing
-											? {
-													onEdit: this.handleEdit,
-											  }
-											: {})}
-									/>
-								);
-							})}
-						</RowRenderer>
-					))}
-				</SheetRenderer>
-			</span>
+			<AutoSizer>
+				{({ height, width }) => (
+					<span
+						ref={(r) => {
+							this.dgDom = r;
+						}}
+						tabIndex="0"
+						className="data-grid-container virtualized-sheet"
+						onKeyDown={this.handleKey}>
+						<Grid
+							itemKey={({ columnIndex: j, rowIndex: i }) => `${i}-${j}`}
+							height={height}
+							width={width}
+							rowHeight={30}
+							columnWidth={50}
+							rowCount={data.length}
+							columnCount={data[0].length}>
+							{this.virtualizedCell}
+						</Grid>
+					</span>
+				)}
+			</AutoSizer>
 		);
 	}
 }

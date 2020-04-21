@@ -1,43 +1,48 @@
-import React from "react";
+import React, { memo, useEffect } from "react";
 import PropTypes from "prop-types";
-import CellShape from "./CellShape";
+// import CellShape from "react-datasheet/lib/CellShape";
 
-export default function Cell({
-	cell,
-	row,
-	col,
-	attributesRenderer,
+const Cell = memo(function Cell({
+	// cell,
+	// row,
+	// col,
+	// attributesRenderer,
 	className,
 	style,
 	onMouseDown,
 	onMouseOver,
 	onDoubleClick,
 	onContextMenu,
+	children,
+	// selected,
 }) {
-	const { colSpan, rowSpan } = cell;
-	const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
+	// console.log(`Log: selected`, selected);
+	// const { colSpan, rowSpan } = cell;
+	// const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
+	useEffect(() => {
+		return () => console.log("a");
+	}, []);
 
 	return (
-		<td
+		<div
 			className={className}
 			onMouseDown={onMouseDown}
 			onMouseOver={onMouseOver}
 			onDoubleClick={onDoubleClick}
 			onTouchEnd={onDoubleClick}
 			onContextMenu={onContextMenu}
-			colSpan={colSpan}
-			rowSpan={rowSpan}
-			style={style}
-			{...attributes}>
-			{this.props.children}
-		</td>
+			// colSpan={colSpan}
+			// rowSpan={rowSpan}
+			style={style}>
+			{children}
+		</div>
 	);
-}
+});
 
 Cell.propTypes = {
-	row: PropTypes.number.isRequired,
-	col: PropTypes.number.isRequired,
-	cell: PropTypes.shape(CellShape).isRequired,
+	// row: PropTypes.number.isRequired,
+	// col: PropTypes.number.isRequired,
+	// cell: PropTypes.shape(CellShape).isRequired,
 	selected: PropTypes.bool,
 	editing: PropTypes.bool,
 	updated: PropTypes.bool,
@@ -56,3 +61,5 @@ Cell.defaultProps = {
 	updated: false,
 	attributesRenderer: () => {},
 };
+
+export default Cell;
