@@ -1,7 +1,7 @@
 import React, { PureComponent, createRef } from "react";
 import PropTypes from "prop-types";
-import Sheet from "react-datasheet/lib/Sheet";
-import Row from "react-datasheet/lib/Row";
+// import Sheet from "react-datasheet/lib/Sheet";
+// import Row from "react-datasheet/lib/Row";
 import Cell from "./Cell";
 import DataCell from "./DataCell";
 import DataEditor from "react-datasheet/lib/DataEditor";
@@ -88,11 +88,11 @@ export default class VirtualizedSheet extends PureComponent {
 	componentDidMount() {
 		// Add listener scoped to the DataSheet that catches otherwise unhandled
 		// keyboard events when displaying components
-		this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
+		// this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
 	}
 
 	componentWillUnmount() {
-		this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
+		// this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
 		this.removeAllListeners();
 	}
 
@@ -105,9 +105,8 @@ export default class VirtualizedSheet extends PureComponent {
 		if (onSelect) {
 			onSelect({ start, end });
 		}
-		if (end.i >= 0 && end.j >= 0) {
+		this.gridRef.current &&
 			this.gridRef.current.scrollToCell({ columnIndex: end.j, rowIndex: end.i });
-		}
 	}
 
 	getState() {
@@ -325,6 +324,16 @@ export default class VirtualizedSheet extends PureComponent {
 				110,
 			].indexOf(keyCode) > -1;
 
+		if (ctrlKeyPressed && !noCellsSelected && !isEditing) {
+			if (keyCode === 65) {
+				this._setState({
+					start: { i: 0, j: 0 },
+					end: { i: this.props.data.length - 1, j: this.props.data[0].length - 1 },
+				});
+				return;
+			}
+		}
+
 		if (noCellsSelected || ctrlKeyPressed) {
 			return true;
 		}
@@ -397,7 +406,7 @@ export default class VirtualizedSheet extends PureComponent {
 		const { data } = this.props;
 		const oldStartLocation = { i: start.i, j: start.j };
 		const newEndLocation = {
-			i: end.i + offsets.i,
+			i: Math.min(data.length - 1, Math.max(0, end.i + offsets.i)),
 			j: Math.min(data[0].length - 1, Math.max(0, end.j + offsets.j)),
 		};
 		this._setState({
@@ -606,8 +615,6 @@ export default class VirtualizedSheet extends PureComponent {
 
 	render() {
 		const {
-			// sheetRenderer: SheetRenderer,
-			// rowRenderer: RowRenderer,
 			cellRenderer,
 			dataRenderer,
 			valueRenderer,
@@ -707,8 +714,8 @@ VirtualizedSheet.propTypes = {
 	}),
 	valueRenderer: PropTypes.func.isRequired,
 	dataRenderer: PropTypes.func,
-	sheetRenderer: PropTypes.func.isRequired,
-	rowRenderer: PropTypes.func.isRequired,
+	// sheetRenderer: PropTypes.func.isRequired,
+	// rowRenderer: PropTypes.func.isRequired,
 	cellRenderer: PropTypes.func.isRequired,
 	valueViewer: PropTypes.func,
 	dataEditor: PropTypes.func,
@@ -718,8 +725,8 @@ VirtualizedSheet.propTypes = {
 };
 
 VirtualizedSheet.defaultProps = {
-	sheetRenderer: Sheet,
-	rowRenderer: Row,
+	// sheetRenderer: Sheet,
+	// rowRenderer: Row,
 	cellRenderer: Cell,
 	valueViewer: ValueViewer,
 	dataEditor: DataEditor,

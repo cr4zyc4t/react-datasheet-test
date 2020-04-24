@@ -4,7 +4,7 @@ import "react-datasheet/lib/react-datasheet.css";
 import VirtualizedSheet from "./VirtualizedSheet";
 
 export default function Sheet() {
-	const [grid, setGrid] = useState(generateData(20, 20));
+	const [grid, setGrid] = useState(generateData(2000, 2000));
 
 	return (
 		<div style={{ height: 600, width: 600 }}>
