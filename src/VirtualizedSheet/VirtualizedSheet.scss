@@ -1,27 +1,27 @@
-.virtualized-sheet {
-	.cell {
-		cursor: default;
-		user-select: none;
-		height: 100%;
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+// .virtualized-sheet {
+// 	.cell {
+// 		cursor: default;
+// 		user-select: none;
+// 		height: 100%;
+// 		width: 100%;
+// 		display: flex;
+// 		align-items: center;
+// 		justify-content: center;
 
-		> input {
-			width: 100%;
-		}
+// 		> input {
+// 			width: 100%;
+// 		}
 
-		&.dark-cell {
-			background-color: #b3e5fc;
-		}
+// 		&.dark-cell {
+// 			background-color: #b3e5fc;
+// 		}
 
-		&.selected {
-			background-color: #7e57c2;
-			color: white;
-			&.dark-cell {
-				background-color: #512da8;
-			}
-		}
-	}
-}
+// 		&.selected {
+// 			background-color: #7e57c2;
+// 			color: white;
+// 			&.dark-cell {
+// 				background-color: #512da8;
+// 			}
+// 		}
+// 	}
+// }

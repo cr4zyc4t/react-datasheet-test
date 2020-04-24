@@ -2,7 +2,6 @@ import "core-js/stable";
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import "react-datasheet/lib/react-datasheet.css";
 import "./index.css";
 
 ReactDOM.render(

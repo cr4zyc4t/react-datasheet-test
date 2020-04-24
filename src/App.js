@@ -1,12 +1,10 @@
 import React from "react";
-// import DataSheet from "./DataSheet/DataSheet";
-// import Sheet from "./Sheet";
-import CustomVirtualized from "./CustomVirtualized";
+import Sheet from "./Sheet";
 
 function App() {
 	return (
 		<div className="App">
-			<CustomVirtualized />
+			<Sheet />
 		</div>
 	);
 }

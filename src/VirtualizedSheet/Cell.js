@@ -1,44 +1,47 @@
-import React, { memo } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
-// import CellShape from "react-datasheet/lib/CellShape";
+import CellShape from "react-datasheet/lib/CellShape";
 
-const Cell = memo(function Cell({
-	cell,
-	row,
-	col,
-	attributesRenderer,
-	className,
-	style,
-	onMouseDown,
-	onMouseOver,
-	onDoubleClick,
-	onContextMenu,
-	children,
-}) {
-	// const { colSpan, rowSpan } = cell;
-	const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
+export default class Cell extends PureComponent {
+	render() {
+		const {
+			cell,
+			row,
+			col,
+			attributesRenderer,
+			className,
+			style,
+			onMouseDown,
+			onMouseOver,
+			onDoubleClick,
+			onContextMenu,
+		} = this.props;
 
-	return (
-		<div
-			className={className}
-			onMouseDown={onMouseDown}
-			onMouseOver={onMouseOver}
-			onDoubleClick={onDoubleClick}
-			onTouchEnd={onDoubleClick}
-			onContextMenu={onContextMenu}
-			// colSpan={colSpan}
-			// rowSpan={rowSpan}
-			{...attributes}
-			style={style}>
-			{children}
-		</div>
-	);
-});
+		const { colSpan, rowSpan } = cell;
+		const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
+
+		return (
+			<td
+				className={className}
+				onMouseDown={onMouseDown}
+				onMouseOver={onMouseOver}
+				onDoubleClick={onDoubleClick}
+				onTouchEnd={onDoubleClick}
+				onContextMenu={onContextMenu}
+				colSpan={colSpan}
+				rowSpan={rowSpan}
+				style={style}
+				{...attributes}>
+				{this.props.children}
+			</td>
+		);
+	}
+}
 
 Cell.propTypes = {
 	row: PropTypes.number.isRequired,
 	col: PropTypes.number.isRequired,
-	// cell: PropTypes.shape(CellShape).isRequired,
+	cell: PropTypes.shape(CellShape).isRequired,
 	selected: PropTypes.bool,
 	editing: PropTypes.bool,
 	updated: PropTypes.bool,
@@ -57,5 +60,3 @@ Cell.defaultProps = {
 	updated: false,
 	attributesRenderer: () => {},
 };
-
-export default Cell;

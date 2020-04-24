@@ -2,8 +2,8 @@ import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import Sheet from "react-datasheet/lib/Sheet";
 import Row from "react-datasheet/lib/Row";
-import Cell from "./Cell";
-import DataCell from "./DataCell";
+import Cell from "react-datasheet/lib/Cell";
+import DataCell from "react-datasheet/lib/DataCell";
 import DataEditor from "react-datasheet/lib/DataEditor";
 import ValueViewer from "react-datasheet/lib/ValueViewer";
 import {
@@ -17,51 +17,23 @@ import {
 	DOWN_KEY,
 	RIGHT_KEY,
 } from "react-datasheet/lib/keys";
-import { isEmpty, range, defaultParsePaste } from "../utils";
-import { FixedSizeGrid as Grid } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
-import "./VirtualizedSheet.scss";
+
+const isEmpty = (obj) => Object.keys(obj).length === 0;
+
+const range = (start, end) => {
+	const array = [];
+	const inc = end - start > 0;
+	for (let i = start; inc ? i <= end : i >= end; inc ? i++ : i--) {
+		inc ? array.push(i) : array.unshift(i);
+	}
+	return array;
+};
+
+const defaultParsePaste = (str) => {
+	return str.split(/\r\n|\n|\r/).map((row) => row.split("\t"));
+};
 
 export default class VirtualizedSheet extends PureComponent {
-	static propTypes = {
-		data: PropTypes.array.isRequired,
-		className: PropTypes.string,
-		overflow: PropTypes.oneOf(["wrap", "nowrap", "clip"]),
-		onChange: PropTypes.func,
-		onCellsChanged: PropTypes.func,
-		onContextMenu: PropTypes.func,
-		onSelect: PropTypes.func,
-		isCellNavigable: PropTypes.func,
-		selected: PropTypes.shape({
-			start: PropTypes.shape({
-				i: PropTypes.number,
-				j: PropTypes.number,
-			}),
-			end: PropTypes.shape({
-				i: PropTypes.number,
-				j: PropTypes.number,
-			}),
-		}),
-		valueRenderer: PropTypes.func.isRequired,
-		dataRenderer: PropTypes.func,
-		sheetRenderer: PropTypes.func.isRequired,
-		rowRenderer: PropTypes.func.isRequired,
-		cellRenderer: PropTypes.any.isRequired,
-		valueViewer: PropTypes.func,
-		dataEditor: PropTypes.func,
-		parsePaste: PropTypes.func,
-		attributesRenderer: PropTypes.func,
-		keyFn: PropTypes.func,
-	};
-
-	static defaultProps = {
-		sheetRenderer: Sheet,
-		rowRenderer: Row,
-		cellRenderer: Cell,
-		valueViewer: ValueViewer,
-		dataEditor: DataEditor,
-	};
-
 	constructor(props) {
 		super(props);
 		this.onMouseDown = this.onMouseDown.bind(this);
@@ -528,7 +500,6 @@ export default class VirtualizedSheet extends PureComponent {
 	}
 
 	onMouseDown(i, j, e) {
-		e.preventDefault();
 		const isNowEditingSameCell =
 			!isEmpty(this.state.editing) && this.state.editing.i === i && this.state.editing.j === j;
 		let editing =
@@ -618,101 +589,114 @@ export default class VirtualizedSheet extends PureComponent {
 		return this.state.clear.i === i && this.state.clear.j === j;
 	}
 
-	virtualizedCell = ({ columnIndex: j, rowIndex: i, style }) => {
-		const { forceEdit } = this.state;
-		const isEditing = this.isEditing(i, j);
+	render() {
 		const {
-			// sheetRenderer: SheetRenderer,
-			// rowRenderer: RowRenderer,
+			sheetRenderer: SheetRenderer,
+			rowRenderer: RowRenderer,
 			cellRenderer,
 			dataRenderer,
 			valueRenderer,
 			dataEditor,
 			valueViewer,
 			attributesRenderer,
-			// className,
-			// overflow,
+			className,
+			overflow,
 			data,
-			// keyFn,
+			keyFn,
 		} = this.props;
-
-		const cell = data[i][j];
-		return (
-			<div style={style}>
-				<DataCell
-					key={`${i}-${j}`}
-					row={i}
-					col={j}
-					cell={cell}
-					forceEdit={forceEdit}
-					onMouseDown={this.onMouseDown}
-					onMouseOver={this.onMouseOver}
-					onDoubleClick={this.onDoubleClick}
-					onContextMenu={this.onContextMenu}
-					onChange={this.onChange}
-					onRevert={this.onRevert}
-					onNavigate={this.handleKeyboardCellMovement}
-					onKey={this.handleKey}
-					selected={this.isSelected(i, j)}
-					editing={isEditing}
-					clearing={this.isClearing(i, j)}
-					attributesRenderer={attributesRenderer}
-					cellRenderer={cellRenderer}
-					valueRenderer={valueRenderer}
-					dataRenderer={dataRenderer}
-					valueViewer={valueViewer}
-					dataEditor={dataEditor}
-					editValue={this.state.editValue}
-					{...(isEditing
-						? {
-								onEdit: this.handleEdit,
-						  }
-						: {})}
-				/>
-			</div>
-		);
-	};
-
-	render() {
-		const {
-			// sheetRenderer: SheetRenderer,
-			// rowRenderer: RowRenderer,
-			// cellRenderer,
-			// dataRenderer,
-			// valueRenderer,
-			// dataEditor,
-			// valueViewer,
-			// attributesRenderer,
-			// className,
-			// overflow,
-			data,
-			// keyFn,
-		} = this.props;
-		// const { forceEdit } = this.state;
+		const { forceEdit } = this.state;
 
 		return (
-			<AutoSizer>
-				{({ height, width }) => (
-					<span
-						ref={(r) => {
-							this.dgDom = r;
-						}}
-						tabIndex="0"
-						className="data-grid-container virtualized-sheet"
-						onKeyDown={this.handleKey}>
-						<Grid
-							itemKey={({ columnIndex: j, rowIndex: i }) => `${i}-${j}`}
-							height={height}
-							width={width}
-							rowHeight={30}
-							columnWidth={50}
-							rowCount={data.length}
-							columnCount={data[0].length}>
-							{this.virtualizedCell}
-						</Grid>
-					</span>
-				)}
-			</AutoSizer>
+			<span
+				ref={(r) => {
+					this.dgDom = r;
+				}}
+				tabIndex="0"
+				className="data-grid-container"
+				onKeyDown={this.handleKey}>
+				<SheetRenderer
+					data={data}
+					className={["data-grid", className, overflow].filter((a) => a).join(" ")}>
+					{data.map((row, i) => (
+						<RowRenderer key={keyFn ? keyFn(i) : i} row={i} cells={row}>
+							{row.map((cell, j) => {
+								const isEditing = this.isEditing(i, j);
+								return (
+									<DataCell
+										key={cell.key ? cell.key : `${i}-${j}`}
+										row={i}
+										col={j}
+										cell={cell}
+										forceEdit={forceEdit}
+										onMouseDown={this.onMouseDown}
+										onMouseOver={this.onMouseOver}
+										onDoubleClick={this.onDoubleClick}
+										onContextMenu={this.onContextMenu}
+										onChange={this.onChange}
+										onRevert={this.onRevert}
+										onNavigate={this.handleKeyboardCellMovement}
+										onKey={this.handleKey}
+										selected={this.isSelected(i, j)}
+										editing={isEditing}
+										clearing={this.isClearing(i, j)}
+										attributesRenderer={attributesRenderer}
+										cellRenderer={cellRenderer}
+										valueRenderer={valueRenderer}
+										dataRenderer={dataRenderer}
+										valueViewer={valueViewer}
+										dataEditor={dataEditor}
+										editValue={this.state.editValue}
+										{...(isEditing
+											? {
+													onEdit: this.handleEdit,
+											  }
+											: {})}
+									/>
+								);
+							})}
+						</RowRenderer>
+					))}
+				</SheetRenderer>
+			</span>
 		);
 	}
 }
+
+VirtualizedSheet.propTypes = {
+	data: PropTypes.array.isRequired,
+	className: PropTypes.string,
+	overflow: PropTypes.oneOf(["wrap", "nowrap", "clip"]),
+	onChange: PropTypes.func,
+	onCellsChanged: PropTypes.func,
+	onContextMenu: PropTypes.func,
+	onSelect: PropTypes.func,
+	isCellNavigable: PropTypes.func,
+	selected: PropTypes.shape({
+		start: PropTypes.shape({
+			i: PropTypes.number,
+			j: PropTypes.number,
+		}),
+		end: PropTypes.shape({
+			i: PropTypes.number,
+			j: PropTypes.number,
+		}),
+	}),
+	valueRenderer: PropTypes.func.isRequired,
+	dataRenderer: PropTypes.func,
+	sheetRenderer: PropTypes.func.isRequired,
+	rowRenderer: PropTypes.func.isRequired,
+	cellRenderer: PropTypes.func.isRequired,
+	valueViewer: PropTypes.func,
+	dataEditor: PropTypes.func,
+	parsePaste: PropTypes.func,
+	attributesRenderer: PropTypes.func,
+	keyFn: PropTypes.func,
+};
+
+VirtualizedSheet.defaultProps = {
+	sheetRenderer: Sheet,
+	rowRenderer: Row,
+	cellRenderer: Cell,
+	valueViewer: ValueViewer,
+	dataEditor: DataEditor,
+};

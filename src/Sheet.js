@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { generateData } from "./utils";
-import VirtualizedSheet from "./VirtualizedSheet/VirtualizedSheet";
+import "react-datasheet/lib/react-datasheet.css";
+import VirtualizedSheet from "./VirtualizedSheet";
 
 export default function Sheet() {
-	const [grid, setGrid] = useState(generateData(100, 100));
+	const [grid, setGrid] = useState(generateData(20, 20));
 
 	return (
 		<div style={{ height: 600, width: 600 }}>
@@ -17,10 +18,6 @@ export default function Sheet() {
 					});
 					setGrid(newGrid);
 				}}
-				// selected={{
-				// 	start: { i: 0, j: 0 },
-				// 	end: { i: 1, j: 1 },
-				// }}
 			/>
 		</div>
 	);

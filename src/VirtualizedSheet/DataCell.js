@@ -12,7 +12,7 @@ import {
 } from "react-datasheet/lib/keys";
 
 import Cell from "./Cell";
-// import CellShape from "react-datasheet/lib/CellShape";
+import CellShape from "react-datasheet/lib/CellShape";
 import DataEditor from "react-datasheet/lib/DataEditor";
 import ValueViewer from "react-datasheet/lib/ValueViewer";
 import { renderValue, renderData } from "react-datasheet/lib/renderHelpers";
@@ -214,7 +214,6 @@ export default class DataCell extends PureComponent {
 			editing && "editing",
 			cell.readOnly && "read-only",
 			updated && "updated",
-			row % 2 === col % 2 && "dark-cell",
 		]
 			.filter((a) => a)
 			.join(" ");
@@ -244,13 +243,13 @@ export default class DataCell extends PureComponent {
 DataCell.propTypes = {
 	row: PropTypes.number.isRequired,
 	col: PropTypes.number.isRequired,
-	// cell: PropTypes.shape(CellShape).isRequired,
+	cell: PropTypes.shape(CellShape).isRequired,
 	forceEdit: PropTypes.bool,
 	selected: PropTypes.bool,
 	editing: PropTypes.bool,
 	editValue: PropTypes.any,
 	clearing: PropTypes.bool,
-	cellRenderer: PropTypes.any,
+	cellRenderer: PropTypes.func,
 	valueRenderer: PropTypes.func.isRequired,
 	dataRenderer: PropTypes.func,
 	valueViewer: PropTypes.func,
