@@ -19,7 +19,6 @@ import {
 } from "react-datasheet/lib/keys";
 import { Grid } from "react-virtualized";
 import clsx from "clsx";
-import "./VirtualizedSheet.scss";
 
 const isEmpty = (obj) => Object.keys(obj).length === 0;
 
@@ -88,11 +87,11 @@ export default class VirtualizedSheet extends PureComponent {
 	componentDidMount() {
 		// Add listener scoped to the DataSheet that catches otherwise unhandled
 		// keyboard events when displaying components
-		// this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
+		this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
 	}
 
 	componentWillUnmount() {
-		// this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
+		this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
 		this.removeAllListeners();
 	}
 
@@ -324,15 +323,15 @@ export default class VirtualizedSheet extends PureComponent {
 				110,
 			].indexOf(keyCode) > -1;
 
-		if (ctrlKeyPressed && !noCellsSelected && !isEditing) {
-			if (keyCode === 65) {
-				this._setState({
-					start: { i: 0, j: 0 },
-					end: { i: this.props.data.length - 1, j: this.props.data[0].length - 1 },
-				});
-				return;
-			}
-		}
+		// if (ctrlKeyPressed && !noCellsSelected && !isEditing) {
+		// 	if (keyCode === 65) {
+		// 		this._setState({
+		// 			start: { i: 0, j: 0 },
+		// 			end: { i: this.props.data.length - 1, j: this.props.data[0].length - 1 },
+		// 		});
+		// 		return;
+		// 	}
+		// }
 
 		if (noCellsSelected || ctrlKeyPressed) {
 			return true;
@@ -625,6 +624,10 @@ export default class VirtualizedSheet extends PureComponent {
 			overflow,
 			data,
 			keyFn,
+			height,
+			width,
+			cellHeight,
+			cellWidth,
 		} = this.props;
 		const { forceEdit } = this.state;
 
@@ -639,52 +642,47 @@ export default class VirtualizedSheet extends PureComponent {
 				<Grid
 					ref={this.gridRef}
 					className={clsx(className, overflow)}
-					height={400}
-					width={600}
+					height={height}
+					width={width}
 					rowCount={data.length}
 					columnCount={data[0].length}
-					rowHeight={34}
-					columnWidth={60}
+					rowHeight={cellHeight}
+					columnWidth={cellWidth}
 					cellRenderer={({ key, style, columnIndex: j, rowIndex: i }) => {
 						const isSelected = this.isSelected(i, j);
 						const isEditing = this.isEditing(i, j);
 						return (
-							<div
+							<DataCell
 								key={keyFn ? keyFn(i, j) : key}
 								style={style}
-								className={clsx("cell", {
-									dark: i % 2 === j % 2,
-								})}>
-								<DataCell
-									row={i}
-									col={j}
-									cell={data[i][j]}
-									forceEdit={forceEdit}
-									onMouseDown={this.onMouseDown}
-									onMouseOver={this.onMouseOver}
-									onDoubleClick={this.onDoubleClick}
-									onContextMenu={this.onContextMenu}
-									onChange={this.onChange}
-									onRevert={this.onRevert}
-									onNavigate={this.handleKeyboardCellMovement}
-									onKey={this.handleKey}
-									selected={isSelected}
-									editing={isEditing}
-									clearing={this.isClearing(i, j)}
-									attributesRenderer={attributesRenderer}
-									cellRenderer={cellRenderer}
-									valueRenderer={valueRenderer}
-									dataRenderer={dataRenderer}
-									valueViewer={valueViewer}
-									dataEditor={dataEditor}
-									editValue={this.state.editValue}
-									{...(isEditing
-										? {
-												onEdit: this.handleEdit,
-										  }
-										: {})}
-								/>
-							</div>
+								row={i}
+								col={j}
+								cell={data[i][j]}
+								forceEdit={forceEdit}
+								onMouseDown={this.onMouseDown}
+								onMouseOver={this.onMouseOver}
+								onDoubleClick={this.onDoubleClick}
+								onContextMenu={this.onContextMenu}
+								onChange={this.onChange}
+								onRevert={this.onRevert}
+								onNavigate={this.handleKeyboardCellMovement}
+								onKey={this.handleKey}
+								selected={isSelected}
+								editing={isEditing}
+								clearing={this.isClearing(i, j)}
+								attributesRenderer={attributesRenderer}
+								cellRenderer={cellRenderer}
+								valueRenderer={valueRenderer}
+								dataRenderer={dataRenderer}
+								valueViewer={valueViewer}
+								dataEditor={dataEditor}
+								editValue={this.state.editValue}
+								{...(isEditing
+									? {
+											onEdit: this.handleEdit,
+									  }
+									: {})}
+							/>
 						);
 					}}
 				/>

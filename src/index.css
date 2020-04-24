@@ -14,7 +14,7 @@ code {
 body * {
 	box-sizing: border-box;
 }
-/* 
+
 .cell {
 	display: flex;
 	align-items: center;
@@ -40,4 +40,4 @@ body * {
 .grid-container {
 	outline: none !important;
 	border: none !important;
-} */
+}

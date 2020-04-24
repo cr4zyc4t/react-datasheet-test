@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import CellShape from "react-datasheet/lib/CellShape";
+import clsx from "clsx";
 
 export default class Cell extends PureComponent {
 	render() {
@@ -17,19 +18,19 @@ export default class Cell extends PureComponent {
 			onContextMenu,
 		} = this.props;
 
-		const { colSpan, rowSpan } = cell;
+		// const { colSpan, rowSpan } = cell;
 		const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
 
 		return (
 			<span
-				className={className}
+				className={clsx(className, { dark: row % 2 === col % 2 })}
 				onMouseDown={onMouseDown}
 				onMouseOver={onMouseOver}
 				onDoubleClick={onDoubleClick}
 				onTouchEnd={onDoubleClick}
 				onContextMenu={onContextMenu}
-				colSpan={colSpan}
-				rowSpan={rowSpan}
+				// colSpan={colSpan}
+				// rowSpan={rowSpan}
 				style={style}
 				{...attributes}>
 				{this.props.children}

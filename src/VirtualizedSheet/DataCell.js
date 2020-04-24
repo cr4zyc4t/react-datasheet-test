@@ -25,9 +25,9 @@ function initialValue({ cell, row, col, valueRenderer }) {
 	return renderValue(cell, row, col, valueRenderer);
 }
 
-function widthStyle(cell) {
+function widthStyle(cell, style = {}) {
 	const width = typeof cell.width === "number" ? cell.width + "px" : cell.width;
-	return width ? { width } : null;
+	return width ? { ...style, width } : style;
 }
 
 export default class DataCell extends PureComponent {
@@ -198,6 +198,7 @@ export default class DataCell extends PureComponent {
 			selected,
 			editing,
 			onKeyUp,
+			style,
 		} = this.props;
 		const { updated } = this.state;
 
@@ -228,7 +229,7 @@ export default class DataCell extends PureComponent {
 				updated={updated}
 				attributesRenderer={attributesRenderer}
 				className={className}
-				style={widthStyle(cell)}
+				style={widthStyle(cell, style)}
 				onMouseDown={this.handleMouseDown}
 				onMouseOver={this.handleMouseOver}
 				onDoubleClick={this.handleDoubleClick}
@@ -263,6 +264,7 @@ DataCell.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	onRevert: PropTypes.func.isRequired,
 	onEdit: PropTypes.func,
+	style: PropTypes.object,
 };
 
 DataCell.defaultProps = {
