@@ -21,7 +21,7 @@ export default class Cell extends PureComponent {
 		const attributes = attributesRenderer ? attributesRenderer(cell, row, col) : {};
 
 		return (
-			<td
+			<span
 				className={className}
 				onMouseDown={onMouseDown}
 				onMouseOver={onMouseOver}
@@ -33,7 +33,7 @@ export default class Cell extends PureComponent {
 				style={style}
 				{...attributes}>
 				{this.props.children}
-			</td>
+			</span>
 		);
 	}
 }
