@@ -23,7 +23,7 @@ body * {
 	cursor: default;
 	user-select: none;
 }
-
+/* 
 .cell.dark {
 	background-color: #b3e5fc;
 }
@@ -40,4 +40,4 @@ body * {
 .grid-container {
 	outline: none !important;
 	border: none !important;
-}
+} */

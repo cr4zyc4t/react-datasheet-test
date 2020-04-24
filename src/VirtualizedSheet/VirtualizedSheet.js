@@ -641,7 +641,7 @@ export default class VirtualizedSheet extends PureComponent {
 				onKeyDown={this.handleKey}>
 				<Grid
 					ref={this.gridRef}
-					className={clsx(className, overflow)}
+					className={clsx("data-grid", className, overflow)}
 					height={height}
 					width={width}
 					rowCount={data.length}
