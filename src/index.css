@@ -15,13 +15,19 @@ body * {
 	box-sizing: border-box;
 }
 
-.cell {
+.data-grid-container .data-grid {
+	outline: none;
+}
+
+.data-grid-container .data-grid .cell {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 14px;
 	cursor: default;
 	user-select: none;
+	border-bottom: none;
+	border-right: none;
 }
 /* 
 .cell.dark {

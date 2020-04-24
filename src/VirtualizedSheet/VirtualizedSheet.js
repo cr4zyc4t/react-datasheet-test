@@ -17,6 +17,8 @@ import {
 	DOWN_KEY,
 	RIGHT_KEY,
 } from "react-datasheet/lib/keys";
+
+import "react-virtualized/styles.css";
 import { Grid } from "react-virtualized";
 import clsx from "clsx";
 
@@ -84,14 +86,14 @@ export default class VirtualizedSheet extends PureComponent {
 		document.removeEventListener("keydown", this.handleIEClipboardEvents);
 	}
 
-	componentDidMount() {
-		// Add listener scoped to the DataSheet that catches otherwise unhandled
-		// keyboard events when displaying components
-		this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
-	}
+	// componentDidMount() {
+	// 	// Add listener scoped to the DataSheet that catches otherwise unhandled
+	// 	// keyboard events when displaying components
+	// 	this.dgDom && this.dgDom.addEventListener("keydown", this.handleComponentKey);
+	// }
 
 	componentWillUnmount() {
-		this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
+		// this.dgDom && this.dgDom.removeEventListener("keydown", this.handleComponentKey);
 		this.removeAllListeners();
 	}
 
@@ -332,6 +334,8 @@ export default class VirtualizedSheet extends PureComponent {
 		// 		return;
 		// 	}
 		// }
+
+		this.handleComponentKey(e);
 
 		if (noCellsSelected || ctrlKeyPressed) {
 			return true;
