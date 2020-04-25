@@ -1,0 +1,51 @@
+$cell_height: 34px;
+$cell_width: 50px;
+
+.scrollsync-container {
+	position: relative;
+	height: 400px;
+	width: 500px;
+	padding-top: $cell_height;
+	padding-left: $cell_width;
+
+	.xaxis {
+		position: absolute;
+		top: 0;
+		left: $cell_width;
+		right: 0;
+		height: $cell_height;
+		overflow-x: auto;
+	}
+
+	.yaxis {
+		position: absolute;
+		top: $cell_height;
+		left: 0;
+		bottom: 0;
+		overflow-y: auto;
+		width: $cell_width;
+	}
+
+	.content-wrapper {
+		overflow: auto;
+		height: 100%;
+		width: 100%;
+	}
+}
+
+table {
+	table-layout: fixed;
+	width: 100%;
+	border-collapse: collapse;
+
+	.table-cell {
+		height: $cell_height;
+		width: $cell_width;
+		text-align: center;
+		vertical-align: middle;
+
+		&.dark {
+			background-color: #4fc3f7;
+		}
+	}
+}

@@ -1,6 +1,9 @@
 {
 	"extends": ["react-app", "plugin:prettier/recommended"],
+	"plugins": ["react-hooks"],
 	"rules": {
-		"no-var": 2
+		"no-var": 2,
+		"react-hooks/rules-of-hooks": "error",
+		"react-hooks/exhaustive-deps": "warn"
 	}
 }

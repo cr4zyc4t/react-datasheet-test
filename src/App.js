@@ -1,10 +1,10 @@
 import React from "react";
-import Sheet from "./Sheet";
+import ScrollSync from "./ScrollSync";
 
 function App() {
 	return (
 		<div className="App">
-			<Sheet />
+			<ScrollSync />
 		</div>
 	);
 }
