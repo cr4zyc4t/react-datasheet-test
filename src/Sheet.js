@@ -9,12 +9,12 @@ export default function Sheet() {
 	const [grid, setGrid] = useState(generateData(2000, 2000));
 
 	return (
-		<div style={{ height: 600, width: 800 }}>
+		<div style={{ height: 400, width: 800 }}>
 			<AutoSizer>
 				{({ height, width }) => (
 					<VirtualizedSheet
 						height={height}
-						width={height}
+						width={width}
 						cellHeight={34}
 						cellWidth={60}
 						data={grid}

@@ -616,6 +616,10 @@ export default class VirtualizedSheet extends PureComponent {
 		return this.state.clear.i === i && this.state.clear.j === j;
 	}
 
+	scrollToPosition({ scrollLeft, scrollTop }) {
+		this.gridRef.current && this.gridRef.current.scrollToPosition({ scrollLeft, scrollTop });
+	}
+
 	render() {
 		const {
 			cellRenderer,
@@ -632,6 +636,8 @@ export default class VirtualizedSheet extends PureComponent {
 			width,
 			cellHeight,
 			cellWidth,
+			onScroll,
+			scrollTop,
 		} = this.props;
 		const { forceEdit } = this.state;
 
@@ -652,6 +658,8 @@ export default class VirtualizedSheet extends PureComponent {
 					columnCount={data[0].length}
 					rowHeight={cellHeight}
 					columnWidth={cellWidth}
+					onScroll={onScroll}
+					scrollTop={scrollTop}
 					cellRenderer={({ key, style, columnIndex: j, rowIndex: i }) => {
 						const isSelected = this.isSelected(i, j);
 						const isEditing = this.isEditing(i, j);

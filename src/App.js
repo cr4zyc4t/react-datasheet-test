@@ -1,10 +1,13 @@
 import React from "react";
-import ScrollSync from "./ScrollSync";
+// import Sheet from "./Sheet";
+// import ScrollSync from "./ScrollSync/ScrollSync";
+// import VirtualizedSheetScrollSync from "./VirtualizedSheetScrollSync";
+import VirtualizedSheetScrollSync2 from "./VirtualizedSheetScrollSync/VirtualizedSheetScrollSync2";
 
 function App() {
 	return (
 		<div className="App">
-			<ScrollSync />
+			<VirtualizedSheetScrollSync2 />
 		</div>
 	);
 }

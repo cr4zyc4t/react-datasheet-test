@@ -1,55 +1,80 @@
 import React, { Component, createRef } from "react";
+import "react-datasheet/lib/react-datasheet.css";
 import "./ScrollSync.scss";
 import { generateData } from "../utils";
 import clsx from "clsx";
 import urlParser from "url-parse";
+import ReactDataSheet from "react-datasheet";
 
+const valueRenderer = (cell) => cell.value;
 export default class ScrollSync extends Component {
 	url = urlParser(window.location.href, true);
 
-	data = generateData(this.url.query.x, this.url.query.y);
 	xAxisRef = createRef();
 	yAxisRef = createRef();
 	contentRef = createRef();
 
+	scrollSrc = null;
+
+	state = {
+		grid: generateData(this.url.query.x, this.url.query.y),
+	};
+
 	handleContentScroll = (e) => {
+		if (this.scrollSrc !== "content") {
+			return;
+		}
 		const { scrollTop, scrollLeft } = e.currentTarget;
 		this.xAxisRef.current.scrollLeft = scrollLeft;
 		this.yAxisRef.current.scrollTop = scrollTop;
 	};
 
 	handleXAxisScroll = (e) => {
+		if (this.scrollSrc !== "xaxis") {
+			return;
+		}
 		const { scrollLeft } = e.currentTarget;
 		this.contentRef.current.scrollLeft = scrollLeft;
 	};
 
 	handleYAxisScroll = (e) => {
+		if (this.scrollSrc !== "yaxis") {
+			return;
+		}
 		const { scrollTop } = e.currentTarget;
 		this.contentRef.current.scrollTop = scrollTop;
 	};
 
 	onMouseEnterContent = (e) => {
-		this.contentRef.current.addEventListener("scroll", this.handleContentScroll);
-	};
-
-	onMouseLeaveContent = () => {
-		this.contentRef.current.removeEventListener("scroll", this.handleContentScroll);
+		setTimeout(() => {
+			this.scrollSrc = "content";
+		}, 300);
 	};
 
 	onMouseEnterXAxis = () => {
-		this.xAxisRef.current.addEventListener("scroll", this.handleXAxisScroll);
-	};
-
-	onMouseLeaveXAxis = () => {
-		this.xAxisRef.current.removeEventListener("scroll", this.handleXAxisScroll);
+		setTimeout(() => {
+			this.scrollSrc = "xaxis";
+		}, 300);
 	};
 
 	onMouseEnterYAxis = () => {
-		this.yAxisRef.current.addEventListener("scroll", this.handleYAxisScroll);
+		setTimeout(() => {
+			this.scrollSrc = "yaxis";
+		}, 300);
 	};
 
-	onMouseLeaveYAxis = () => {
-		this.yAxisRef.current.removeEventListener("scroll", this.handleYAxisScroll);
+	onMouseLeave = () => {
+		setTimeout(() => {
+			this.scrollSrc = null;
+		}, 300);
+	};
+
+	onCellsChanged = (changes) => {
+		const grid = this.state.grid.map((row) => [...row]);
+		changes.forEach(({ cell, row, col, value }) => {
+			grid[row][col] = { ...grid[row][col], value };
+		});
+		this.setState({ grid });
 	};
 
 	render() {
@@ -58,14 +83,15 @@ export default class ScrollSync extends Component {
 				<div
 					className="xaxis"
 					ref={this.xAxisRef}
+					onScroll={this.handleXAxisScroll}
 					onMouseEnter={this.onMouseEnterXAxis}
-					onMouseLeave={this.onMouseLeaveXAxis}>
+					onMouseLeave={this.onMouseLeave}>
 					<table>
 						<tbody>
 							<tr>
-								{this.data[0].map((cell, i) => (
+								{this.state.grid[0].map((cell, i) => (
 									<td key={i} className={clsx("table-cell", i % 2 && "dark")}>
-										C{i + 1}
+										C{i}
 									</td>
 								))}
 							</tr>
@@ -75,13 +101,14 @@ export default class ScrollSync extends Component {
 				<div
 					className="yaxis"
 					ref={this.yAxisRef}
+					onScroll={this.handleYAxisScroll}
 					onMouseEnter={this.onMouseEnterYAxis}
-					onMouseLeave={this.onMouseLeaveYAxis}>
+					onMouseLeave={this.onMouseLeave}>
 					<table>
 						<tbody>
-							{this.data.map((cell, i) => (
+							{this.state.grid.map((cell, i) => (
 								<tr key={i}>
-									<td className={clsx("table-cell", i % 2 && "dark")}>R{i + 1}</td>
+									<td className={clsx("table-cell", i % 2 && "dark")}>R{i}</td>
 								</tr>
 							))}
 						</tbody>
@@ -90,21 +117,15 @@ export default class ScrollSync extends Component {
 				<div
 					className="content-wrapper"
 					ref={this.contentRef}
+					onScroll={this.handleContentScroll}
 					onMouseEnter={this.onMouseEnterContent}
-					onMouseLeave={this.onMouseLeaveContent}>
-					<table>
-						<tbody>
-							{this.data.map((row, i) => (
-								<tr key={i}>
-									{row.map((cell, j) => (
-										<td key={j} className={clsx("table-cell", i % 2 === j % 2 && "dark")}>
-											{cell.value}
-										</td>
-									))}
-								</tr>
-							))}
-						</tbody>
-					</table>
+					onMouseLeave={this.onMouseLeave}>
+					<ReactDataSheet
+						data={this.state.grid}
+						valueRenderer={valueRenderer}
+						onCellsChanged={this.onCellsChanged}
+						keyFn={(row, column) => `${row}-${column}`}
+					/>
 				</div>
 			</div>
 		);

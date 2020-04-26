@@ -1,0 +1,53 @@
+.virtualize-scroll-sync {
+	padding: 15px;
+	display: flex;
+	flex-direction: row;
+
+	.scroll-area {
+		flex: 1;
+		height: 400px;
+		padding: 15px;
+
+		.sheet-container {
+			height: 100%;
+			width: 100%;
+
+			.cell {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		}
+	}
+}
+
+.virtualize-scroll-sync-2 {
+	padding: 15px;
+	display: flex;
+	flex-direction: row;
+
+	.data-grid {
+		width: 100%;
+	}
+
+	.scroll-area {
+		flex: 1;
+		height: 400px;
+		padding: 15px;
+
+		.sheet-container {
+			height: 100%;
+			width: 100%;
+
+			.cell {
+				// display: flex;
+				// align-items: center;
+				// justify-content: center;
+				height: 34px;
+				width: 60px;
+				text-align: center;
+				vertical-align: middle;
+			}
+		}
+	}
+}
