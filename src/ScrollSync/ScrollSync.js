@@ -1,73 +1,112 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { Component, createRef } from "react";
 import "./ScrollSync.scss";
 import { generateData } from "../utils";
 import clsx from "clsx";
 import urlParser from "url-parse";
 
-export default function ScrollSync() {
-	const url = urlParser(window.location.href, true);
-	const { x = 20, y = 20 } = url.query;
+export default class ScrollSync extends Component {
+	url = urlParser(window.location.href, true);
 
-	const [data] = useState(generateData(x, y));
-	const xAxis = useRef(null);
-	const yAxis = useRef(null);
-	const contentRef = useRef(null);
+	data = generateData(this.url.query.x, this.url.query.y);
+	xAxisRef = createRef();
+	yAxisRef = createRef();
+	contentRef = createRef();
 
-	const handleContentScroll = useCallback((e) => {
+	handleContentScroll = (e) => {
 		const { scrollTop, scrollLeft } = e.currentTarget;
-		xAxis.current.scrollLeft = scrollLeft;
-		yAxis.current.scrollTop = scrollTop;
-	}, []);
-	const handleXAxisScroll = useCallback((e) => {
-		const { scrollLeft } = e.currentTarget;
-		// contentRef.current.scrollLeft = scrollLeft;
-	}, []);
-	const handleYAxisScroll = useCallback((e) => {
-		const { scrollTop } = e.currentTarget;
-		// contentRef.current.scrollTop = scrollTop;
-	}, []);
+		this.xAxisRef.current.scrollLeft = scrollLeft;
+		this.yAxisRef.current.scrollTop = scrollTop;
+	};
 
-	return (
-		<div className="scrollsync-container">
-			<div className="xaxis" ref={xAxis} onScroll={handleXAxisScroll}>
-				<table>
-					<tbody>
-						<tr>
-							{data[0].map((cell, i) => (
-								<td key={i} className={clsx("table-cell", i % 2 && "dark")}>
-									C{i + 1}
-								</td>
-							))}
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div className="yaxis" ref={yAxis} onScroll={handleYAxisScroll}>
-				<table>
-					<tbody>
-						{data.map((cell, i) => (
-							<tr key={i}>
-								<td className={clsx("table-cell", i % 2 && "dark")}>R{i + 1}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</div>
-			<div className="content-wrapper" ref={contentRef} onScroll={handleContentScroll}>
-				<table>
-					<tbody>
-						{data.map((row, i) => (
-							<tr key={i}>
-								{row.map((cell, j) => (
-									<td key={j} className={clsx("table-cell", i % 2 === j % 2 && "dark")}>
-										{cell.value}
+	handleXAxisScroll = (e) => {
+		const { scrollLeft } = e.currentTarget;
+		this.contentRef.current.scrollLeft = scrollLeft;
+	};
+
+	handleYAxisScroll = (e) => {
+		const { scrollTop } = e.currentTarget;
+		this.contentRef.current.scrollTop = scrollTop;
+	};
+
+	onMouseEnterContent = (e) => {
+		this.contentRef.current.addEventListener("scroll", this.handleContentScroll);
+	};
+
+	onMouseLeaveContent = () => {
+		this.contentRef.current.removeEventListener("scroll", this.handleContentScroll);
+	};
+
+	onMouseEnterXAxis = () => {
+		this.xAxisRef.current.addEventListener("scroll", this.handleXAxisScroll);
+	};
+
+	onMouseLeaveXAxis = () => {
+		this.xAxisRef.current.removeEventListener("scroll", this.handleXAxisScroll);
+	};
+
+	onMouseEnterYAxis = () => {
+		this.yAxisRef.current.addEventListener("scroll", this.handleYAxisScroll);
+	};
+
+	onMouseLeaveYAxis = () => {
+		this.yAxisRef.current.removeEventListener("scroll", this.handleYAxisScroll);
+	};
+
+	render() {
+		return (
+			<div className="scrollsync-container">
+				<div
+					className="xaxis"
+					ref={this.xAxisRef}
+					onMouseEnter={this.onMouseEnterXAxis}
+					onMouseLeave={this.onMouseLeaveXAxis}>
+					<table>
+						<tbody>
+							<tr>
+								{this.data[0].map((cell, i) => (
+									<td key={i} className={clsx("table-cell", i % 2 && "dark")}>
+										C{i + 1}
 									</td>
 								))}
 							</tr>
-						))}
-					</tbody>
-				</table>
+						</tbody>
+					</table>
+				</div>
+				<div
+					className="yaxis"
+					ref={this.yAxisRef}
+					onMouseEnter={this.onMouseEnterYAxis}
+					onMouseLeave={this.onMouseLeaveYAxis}>
+					<table>
+						<tbody>
+							{this.data.map((cell, i) => (
+								<tr key={i}>
+									<td className={clsx("table-cell", i % 2 && "dark")}>R{i + 1}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+				<div
+					className="content-wrapper"
+					ref={this.contentRef}
+					onMouseEnter={this.onMouseEnterContent}
+					onMouseLeave={this.onMouseLeaveContent}>
+					<table>
+						<tbody>
+							{this.data.map((row, i) => (
+								<tr key={i}>
+									{row.map((cell, j) => (
+										<td key={j} className={clsx("table-cell", i % 2 === j % 2 && "dark")}>
+											{cell.value}
+										</td>
+									))}
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
-		</div>
-	);
+		);
+	}
 }

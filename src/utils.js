@@ -2,7 +2,7 @@ function random(start, end) {
 	return Math.floor(Math.random() * (end - start) + 1);
 }
 
-export function generateData(sizeX, sizeY) {
+export function generateData(sizeX = 20, sizeY = 20) {
 	let data = [];
 	for (let i = 0; i < sizeY; i++) {
 		let rowData = [];
