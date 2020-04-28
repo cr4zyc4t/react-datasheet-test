@@ -5,6 +5,8 @@ import { generateData } from "../utils";
 import clsx from "clsx";
 import urlParser from "url-parse";
 import ReactDataSheet from "react-datasheet";
+import { Scrollbar } from "react-scrollbars-custom";
+import { AutoSizer } from "react-virtualized";
 
 const valueRenderer = (cell) => cell.value;
 export default class ScrollSync extends Component {
@@ -20,11 +22,10 @@ export default class ScrollSync extends Component {
 		grid: generateData(this.url.query.x, this.url.query.y),
 	};
 
-	handleContentScroll = (e) => {
+	handleContentScroll = ({ scrollTop, scrollLeft }) => {
 		if (this.scrollSrc !== "content") {
 			return;
 		}
-		const { scrollTop, scrollLeft } = e.currentTarget;
 		this.xAxisRef.current.scrollLeft = scrollLeft;
 		this.yAxisRef.current.scrollTop = scrollTop;
 	};
@@ -114,18 +115,21 @@ export default class ScrollSync extends Component {
 						</tbody>
 					</table>
 				</div>
-				<div
-					className="content-wrapper"
-					ref={this.contentRef}
-					onScroll={this.handleContentScroll}
-					onMouseEnter={this.onMouseEnterContent}
-					onMouseLeave={this.onMouseLeave}>
-					<ReactDataSheet
-						data={this.state.grid}
-						valueRenderer={valueRenderer}
-						onCellsChanged={this.onCellsChanged}
-						keyFn={(row, column) => `${row}-${column}`}
-					/>
+				<div className="content-wrapper">
+							<Scrollbar
+								className="adwdwd"
+								ref={this.contentRef}
+								disableTracksWidthCompensation
+								onScroll={this.handleContentScroll}
+								onMouseEnter={this.onMouseEnterContent}
+								onMouseLeave={this.onMouseLeave}>
+								<ReactDataSheet
+									data={this.state.grid}
+									valueRenderer={valueRenderer}
+									onCellsChanged={this.onCellsChanged}
+									keyFn={(row, column) => `${row}-${column}`}
+								/>
+							</Scrollbar>
 				</div>
 			</div>
 		);
