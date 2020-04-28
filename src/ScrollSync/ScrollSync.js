@@ -116,20 +116,20 @@ export default class ScrollSync extends Component {
 					</table>
 				</div>
 				<div className="content-wrapper">
-							<Scrollbar
-								className="adwdwd"
-								ref={this.contentRef}
-								disableTracksWidthCompensation
-								onScroll={this.handleContentScroll}
-								onMouseEnter={this.onMouseEnterContent}
-								onMouseLeave={this.onMouseLeave}>
-								<ReactDataSheet
-									data={this.state.grid}
-									valueRenderer={valueRenderer}
-									onCellsChanged={this.onCellsChanged}
-									keyFn={(row, column) => `${row}-${column}`}
-								/>
-							</Scrollbar>
+					<Scrollbar
+						className="scrollbar-custom"
+						ref={this.contentRef}
+						disableTracksWidthCompensation
+						onScroll={this.handleContentScroll}
+						onMouseEnter={this.onMouseEnterContent}
+						onMouseLeave={this.onMouseLeave}>
+						<ReactDataSheet
+							data={this.state.grid}
+							valueRenderer={valueRenderer}
+							onCellsChanged={this.onCellsChanged}
+							keyFn={(row, column) => `${row}-${column}`}
+						/>
+					</Scrollbar>
 				</div>
 			</div>
 		);
