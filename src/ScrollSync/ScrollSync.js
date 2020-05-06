@@ -6,7 +6,6 @@ import clsx from "clsx";
 import urlParser from "url-parse";
 import ReactDataSheet from "react-datasheet";
 import { Scrollbar } from "react-scrollbars-custom";
-import { AutoSizer } from "react-virtualized";
 
 const valueRenderer = (cell) => cell.value;
 export default class ScrollSync extends Component {
@@ -16,59 +15,79 @@ export default class ScrollSync extends Component {
 	yAxisRef = createRef();
 	contentRef = createRef();
 
-	scrollSrc = null;
+	masterScroller = null;
 
 	state = {
 		grid: generateData(this.url.query.x, this.url.query.y),
 	};
 
-	handleContentScroll = ({ scrollTop, scrollLeft }) => {
-		if (this.scrollSrc !== "content") {
+	onScrollStart = (scroller) => () => {
+		if (!this.masterScroller) {
+			this.masterScroller = scroller;
+		}
+	};
+
+	onScroll = (scroller) => ({ scrollTop, scrollLeft }) => {
+		if (this.masterScroller !== scroller) {
 			return;
 		}
-		this.xAxisRef.current.scrollLeft = scrollLeft;
-		this.yAxisRef.current.scrollTop = scrollTop;
+		this.masterScroller !== this.contentRef && (this.contentRef.current.scrollLeft = scrollLeft);
+		this.masterScroller !== this.contentRef && (this.contentRef.current.scrollTop = scrollTop);
+		this.masterScroller !== this.xAxisRef && (this.xAxisRef.current.scrollLeft = scrollLeft);
+		this.masterScroller !== this.yAxisRef && (this.yAxisRef.current.scrollTop = scrollTop);
 	};
 
-	handleXAxisScroll = (e) => {
-		if (this.scrollSrc !== "xaxis") {
-			return;
+	onScrollStop = (scroller) => () => {
+		if (this.masterScroller === scroller) {
+			this.masterScroller = null;
 		}
-		const { scrollLeft } = e.currentTarget;
-		this.contentRef.current.scrollLeft = scrollLeft;
 	};
 
-	handleYAxisScroll = (e) => {
-		if (this.scrollSrc !== "yaxis") {
-			return;
-		}
-		const { scrollTop } = e.currentTarget;
-		this.contentRef.current.scrollTop = scrollTop;
-	};
+	// handleContentScroll = ({ scrollTop, scrollLeft }) => {
+	// 	if (this.masterScroller !== "content") {
+	// 		return;
+	// 	}
+	// 	this.xAxisRef.current.scrollLeft = scrollLeft;
+	// 	this.yAxisRef.current.scrollTop = scrollTop;
+	// };
 
-	onMouseEnterContent = (e) => {
-		setTimeout(() => {
-			this.scrollSrc = "content";
-		}, 300);
-	};
+	// handleXAxisScroll = ({ scrollTop, scrollLeft }) => {
+	// 	if (this.masterScroller !== "xaxis") {
+	// 		return;
+	// 	}
+	// 	this.contentRef.current.scrollLeft = scrollLeft;
+	// };
 
-	onMouseEnterXAxis = () => {
-		setTimeout(() => {
-			this.scrollSrc = "xaxis";
-		}, 300);
-	};
+	// handleYAxisScroll = ({ scrollTop, scrollLeft }) => {
+	// 	if (this.masterScroller !== "yaxis") {
+	// 		return;
+	// 	}
+	// 	this.contentRef.current.scrollTop = scrollTop;
+	// };
 
-	onMouseEnterYAxis = () => {
-		setTimeout(() => {
-			this.scrollSrc = "yaxis";
-		}, 300);
-	};
+	// onMouseEnterContent = (e) => {
+	// 	// setTimeout(() => {
+	// 	this.masterScroller = "content";
+	// 	// }, 300);
+	// };
 
-	onMouseLeave = () => {
-		setTimeout(() => {
-			this.scrollSrc = null;
-		}, 300);
-	};
+	// onMouseEnterXAxis = () => {
+	// 	// setTimeout(() => {
+	// 	this.masterScroller = "xaxis";
+	// 	// }, 300);
+	// };
+
+	// onMouseEnterYAxis = () => {
+	// 	// setTimeout(() => {
+	// 	this.masterScroller = "yaxis";
+	// 	// }, 300);
+	// };
+
+	// onMouseLeave = () => {
+	// 	// setTimeout(() => {
+	// 	this.masterScroller = null;
+	// 	// }, 300);
+	// };
 
 	onCellsChanged = (changes) => {
 		const grid = this.state.grid.map((row) => [...row]);
@@ -81,12 +100,13 @@ export default class ScrollSync extends Component {
 	render() {
 		return (
 			<div className="scrollsync-container">
-				<div
+				<Scrollbar
 					className="xaxis"
 					ref={this.xAxisRef}
-					onScroll={this.handleXAxisScroll}
-					onMouseEnter={this.onMouseEnterXAxis}
-					onMouseLeave={this.onMouseLeave}>
+					disableTracksWidthCompensation
+					onScroll={this.onScroll(this.xAxisRef)}
+					onScrollStart={this.onScrollStart(this.xAxisRef)}
+					onScrollStop={this.onScrollStop(this.xAxisRef)}>
 					<table>
 						<tbody>
 							<tr>
@@ -98,13 +118,14 @@ export default class ScrollSync extends Component {
 							</tr>
 						</tbody>
 					</table>
-				</div>
-				<div
+				</Scrollbar>
+				<Scrollbar
 					className="yaxis"
 					ref={this.yAxisRef}
-					onScroll={this.handleYAxisScroll}
-					onMouseEnter={this.onMouseEnterYAxis}
-					onMouseLeave={this.onMouseLeave}>
+					disableTracksWidthCompensation
+					onScroll={this.onScroll(this.yAxisRef)}
+					onScrollStart={this.onScrollStart(this.yAxisRef)}
+					onScrollStop={this.onScrollStop(this.yAxisRef)}>
 					<table>
 						<tbody>
 							{this.state.grid.map((cell, i) => (
@@ -114,15 +135,15 @@ export default class ScrollSync extends Component {
 							))}
 						</tbody>
 					</table>
-				</div>
+				</Scrollbar>
 				<div className="content-wrapper">
 					<Scrollbar
 						className="scrollbar-custom"
 						ref={this.contentRef}
 						disableTracksWidthCompensation
-						onScroll={this.handleContentScroll}
-						onMouseEnter={this.onMouseEnterContent}
-						onMouseLeave={this.onMouseLeave}>
+						onScroll={this.onScroll(this.contentRef)}
+						onScrollStart={this.onScrollStart(this.contentRef)}
+						onScrollStop={this.onScrollStop(this.contentRef)}>
 						<ReactDataSheet
 							data={this.state.grid}
 							valueRenderer={valueRenderer}

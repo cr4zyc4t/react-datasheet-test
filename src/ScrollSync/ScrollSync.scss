@@ -1,4 +1,4 @@
-$cell_height: 34px;
+$cell_height: 24px;
 $cell_width: 50px;
 
 .scrollsync-container {
@@ -9,21 +9,23 @@ $cell_width: 50px;
 	padding-left: $cell_width;
 
 	.xaxis {
-		position: absolute;
+		position: absolute !important;
 		top: 0;
 		left: $cell_width;
 		right: 0;
-		height: $cell_height;
+		width: auto !important;
+		height: $cell_height !important;
 		overflow-x: auto;
 	}
 
 	.yaxis {
-		position: absolute;
+		position: absolute !important;
 		top: $cell_height;
 		left: 0;
 		bottom: 0;
 		overflow-y: auto;
-		width: $cell_width;
+		height: auto !important;
+		width: $cell_width !important;
 	}
 
 	.content-wrapper {
@@ -33,6 +35,13 @@ $cell_width: 50px;
 			height: 100%;
 			width: 100%;
 		}
+	}
+
+	.ScrollbarsCustom-Track.ScrollbarsCustom-TrackY {
+		width: 5px !important;
+	}
+	.ScrollbarsCustom-Track.ScrollbarsCustom-TrackX {
+		height: 5px !important;
 	}
 }
 
